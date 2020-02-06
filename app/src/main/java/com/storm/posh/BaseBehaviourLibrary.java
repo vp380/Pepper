@@ -781,6 +781,18 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
         }
     }
 
+    public void introduceToHuman() {
+        pepperLog.appendLog(TAG, "Starts introducing to human");
+        if (!humanPresent) {
+            pepperLog.appendLog(TAG, "Cannot approach when no human present");
+            return;
+        } else if (animating){
+            pepperLog.appendLog(TAG, "Cannot approach, already animating");
+            return;
+        } else {
+            setActive();
+        }
+    }
     private void followHuman(Human human) {
         pepperLog.appendLog(TAG, "Follow human?");
         // Create the target frame from the human.
