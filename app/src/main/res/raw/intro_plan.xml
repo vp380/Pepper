@@ -46,7 +46,11 @@
             </Senses>
         </CompetenceElement>
         <CompetenceElement name="CE-AskForResult" triggers="AP-AskForResult"></CompetenceElement>
-        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHumans"></CompetenceElement>
+        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman">
+            <Senses>
+                <Sense name="BatteryLow" value="0" comparator="bool"></Sense>
+            </Senses>
+        </CompetenceElement>
     </CompetenceElements>
 
     <Competences>
@@ -80,7 +84,6 @@
                 <CompetenceElement name="CE-SayHello"></CompetenceElement>
             </CompetenceElements>
         </Competence>
-
     </Competences>
 
     <DriveElements>
@@ -90,7 +93,7 @@
             </Senses>
         </DriveElement>
 
-        <DriveElement name="DE-SayHello" triggers="C-SayHello" checkTime="10">
+        <DriveElement name="DE-SayHello" triggers="C-SayHello" checkTime="5">
             <Senses>
                 <!--<Sense name="HumanPresent" value="1" comparator="bool"></Sense>-->
                 <Sense name="HumanPresent" value="1" comparator="bool"></Sense>

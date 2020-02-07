@@ -117,8 +117,10 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
 
         switch (action.getNameOfElement()) {
 
-            case "AP-IntroduceToHuman":
+            case "IntroduceToHuman":
+
                 introduceToHuman();
+                pepperLog.appendLog(TAG,"Introducing");
                 break;
 
             default:
@@ -206,17 +208,15 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
     }
 
     public void introduceToHuman() {
+        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
         pepperLog.appendLog(TAG, "Starts introducing to human");
-        if (!humanPresent) {
-            pepperLog.appendLog(TAG, "Cannot approach when no human present");
-            return;
-        } else {
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
                     .withText("\\style=neutral\\ Hello human. I'm saying a very long sentence to test if this function actually works.") // Set the text to say.
                     .withBodyLanguageOption(BodyLanguageOption.DISABLED)
                     .build(); // Build the say action.
             say.run();
-        }
+
+        });
     }
 
     @Override
