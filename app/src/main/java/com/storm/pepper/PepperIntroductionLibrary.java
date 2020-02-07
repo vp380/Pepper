@@ -14,6 +14,7 @@ import com.aldebaran.qi.sdk.builder.TopicBuilder;
 import com.aldebaran.qi.sdk.object.actuation.Animate;
 import com.aldebaran.qi.sdk.object.actuation.Animation;
 import com.aldebaran.qi.sdk.object.conversation.BodyLanguageOption;
+import com.aldebaran.qi.sdk.object.conversation.Chat;
 import com.aldebaran.qi.sdk.object.conversation.Listen;
 import com.aldebaran.qi.sdk.object.conversation.ListenResult;
 import com.aldebaran.qi.sdk.object.conversation.Phrase;
@@ -123,6 +124,12 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
                 pepperLog.appendLog(TAG,"Introducing");
                 break;
 
+            case "GoodbyeToHuman":
+
+                goodbyeToHuman();
+                pepperLog.appendLog(TAG,"Goodbye");
+                break;
+
             default:
                 super.executeAction(action);
                 break;
@@ -209,16 +216,73 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
 
     public void introduceToHuman() {
         FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
-        pepperLog.appendLog(TAG, "Starts introducing to human");
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("\\style=neutral\\ Hello human. I'm saying a very long sentence to test if this function actually works.") // Set the text to say.
+                    .withText("Hello human!") // Set the text to say.
+                    .build(); // Build the say action.
+//                    .withBodyLanguageOption(BodyLanguageOption.DISABLED)
+
+            say.run();
+
+            // Create a topic.
+            Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withResource(R.raw.roll_result) // Set the topic resource.
+                    .build(); // Build the topic.
+
+            // Create a new QiChatbot.
+            QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
+                    .withTopic(topic)
+                    .build();
+
+            QiChatVariable chatRollResult = qiChatbot.variable("rollResult");
+
+            chatRollResult.addOnValueChangedListener(currentValue -> {
+                Log.i(TAG, "chatRollResult: " + String.valueOf(currentValue));
+                this.rollResult = Double.valueOf(currentValue);
+                this.reset();
+            });
+
+
+            // Create a new Chat action.
+            chat = ChatBuilder.with(qiContext)
+                    .withChatbot(qiChatbot)
+                    .build();
+
+            // Add an on started listener to the Chat action.
+            chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));
+
+            // Run the Chat action asynchronously.
+            Future<Void> chatFuture = chat.async().run();
+
+            // Stop the chat when done
+            qiChatbot.addOnEndedListener(endReason -> {
+                pepperLog.appendLog(TAG, String.format("Chat ended: %s", endReason));
+                chatFuture.requestCancellation();
+            });
+
+            // Add a lambda to the action execution.
+            chatFuture.thenConsume(future -> {
+                pepperLog.appendLog(TAG, "Chat completed?");
+                this.talking = false;
+                this.listening = false;
+                this.dieRolled = true;
+                if (future.hasError()) {
+                    Log.d(TAG, "Discussion finished with error.", future.getError());
+                }
+            });
+        });
+
+    }
+
+    public void goodbyeToHuman() {
+        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
+            pepperLog.appendLog(TAG, "Starts goodbye to human");
+            Say say = SayBuilder.with(qiContext) // Create the builder with the context.
+                    .withText("\\style=neutral\\ Goodbye human.") // Set the text to say.
                     .withBodyLanguageOption(BodyLanguageOption.DISABLED)
                     .build(); // Build the say action.
             say.run();
-
         });
     }
-
     @Override
     protected void locationReached(int id) {
         pepperLog.appendLog(TAG, String.format("Reached: %d", id));
