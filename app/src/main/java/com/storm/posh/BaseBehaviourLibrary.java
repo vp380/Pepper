@@ -694,6 +694,7 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
     protected void lookAtHuman() {
         lookAtHuman(LookAtMovementPolicy.HEAD_AND_BASE);
     }
+
     protected void lookAtHuman(LookAtMovementPolicy policy) {
         if (animating) {
             pepperLog.appendLog(TAG, "Already animating. Cannot look at human");

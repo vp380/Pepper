@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plan>
+    <ActionPatterns>
+        <ActionPattern name="AP-IntroduceToHuman">
+            <Actions>
+                <Action name="IntroduceToHuman"></Action>
+            </Actions>
+        </ActionPattern>
+    </ActionPatterns>
+
+    <CompetenceElements>
+        <CompetenceElement name="CE-BatteryPrompt" triggers="AP-BatteryPrompt">
+            <Senses>
+                <Sense name="Talking" value="0" comparator="bool"></Sense>
+                <Sense name="Listening" value="0" comparator="bool"></Sense>
+            </Senses>
+        </CompetenceElement>
+        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman"></CompetenceElement>
+    </CompetenceElements>
+
+    <Competences>
+        <Competence name="C-BatteryPrompt">
+            <CompetenceElements>
+                <CompetenceElement name="CE-BatteryPrompt"></CompetenceElement>
+            </CompetenceElements>
+        </Competence>
+
+        <Competence name="C-SayHello">
+            <CompetenceElements>
+                <CompetenceElement name="CE-SayHello"></CompetenceElement>
+            </CompetenceElements>
+        </Competence>
+    </Competences>
+
+    <DriveElements>
+        <DriveElement name="DE-BatteryPrompt" triggers="C-BatteryPrompt" checkTime="60">
+            <Senses>
+                <Sense name="BatteryLow" value="1" comparator="bool"></Sense>
+            </Senses>
+        </DriveElement>
+
+        <DriveElement name="DE-SayHello" triggers="C-SayHello" checkTime="5">
+            <Senses>
+                <Sense name="HumanPresent" value="1" comparator="bool"></Sense>
+            </Senses>
+        </DriveElement>
+    </DriveElements>
+
+    <Drives>
+        <Drive name="D-Battery" priority="1">
+            <DriveElements>
+                <DriveElement name="DE-BatteryPrompt"></DriveElement>
+            </DriveElements>
+        </Drive>
+        <Drive name="D-SayHello" priority="2">
+            <DriveElements>
+                <DriveElement name="DE-SayHello"></DriveElement>
+            </DriveElements>
+        </Drive>
+    </Drives>
+</Plan>
