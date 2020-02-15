@@ -94,10 +94,48 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         } else {
             FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
                 Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                        .withText("I am cool. Are you though?") // Set the text to say.
+                        .withText("Hello!") // Set the text to say.
                         .withBodyLanguageOption(BodyLanguageOption.NEUTRAL)
                         .build(); // Build the say action.
+
                 say.run();
+
+                // Create a topic.
+                Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                        .withResource(R.raw.greet_participant) // Set the topic resource.
+                        .build(); // Build the topic.
+
+                // Create a new QiChatbot.
+                QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
+                        .withTopic(topic)
+                        .build();
+
+                // Create a new Chat action.
+                chat = ChatBuilder.with(qiContext)
+                        .withChatbot(qiChatbot)
+                        .build();
+
+                // Add an on started listener to the Chat action.
+                chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));
+
+                // Run the Chat action asynchronously.
+                Future<Void> chatFuture = chat.async().run();
+
+                // Stop the chat when done
+                qiChatbot.addOnEndedListener(endReason -> {
+                    pepperLog.appendLog(TAG, String.format("Chat ended: %s", endReason));
+                    chatFuture.requestCancellation();
+                });
+
+                // Add a lambda to the action execution.
+                chatFuture.thenConsume(future -> {
+                    pepperLog.appendLog(TAG, "Chat completed?");
+                    this.talking = false;
+                    this.listening = false;
+                    if (future.hasError()) {
+                        Log.d(TAG, "Discussion finished with error.", future.getError());
+                    }
+                });
             });
         }
     }
