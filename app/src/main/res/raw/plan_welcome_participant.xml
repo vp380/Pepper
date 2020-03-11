@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Plan>
     <ActionPatterns>
+        <ActionPattern name="AP-BatteryPrompt">
+            <Actions>
+                <Action name="PromptForBatteryCharge"></Action>
+            </Actions>
+        </ActionPattern>
+
         <ActionPattern name="AP-IntroduceToHuman">
             <Actions>
                 <Action name="IntroduceToHuman"></Action>
+            </Actions>
+        </ActionPattern>
+
+        <ActionPattern name="AP-GoToTable">
+            <Actions>
+                <Action name="GoToTable"></Action>
             </Actions>
         </ActionPattern>
     </ActionPatterns>
@@ -15,7 +27,14 @@
                 <Sense name="Listening" value="0" comparator="bool"></Sense>
             </Senses>
         </CompetenceElement>
+
         <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman"></CompetenceElement>
+
+        <CompetenceElement name="CE-GoToTable" triggers="AP-GoToTable">
+            <Senses>
+                <Sense name="IntroductionHappened" value="1" comparator="bool"></Sense>
+            </Senses>
+        </CompetenceElement>
     </CompetenceElements>
 
     <Competences>
@@ -28,6 +47,12 @@
         <Competence name="C-SayHello">
             <CompetenceElements>
                 <CompetenceElement name="CE-SayHello"></CompetenceElement>
+            </CompetenceElements>
+        </Competence>
+
+        <Competence name="C-GoToTable">
+            <CompetenceElements>
+                <CompetenceElement name="CE-GoToTable"></CompetenceElement>
             </CompetenceElements>
         </Competence>
     </Competences>
@@ -44,6 +69,12 @@
                 <Sense name="HumanPresent" value="1" comparator="bool"></Sense>
             </Senses>
         </DriveElement>
+
+        <DriveElement name="DE-GoToTable" triggers="C-GoToTable" checkTime="5">
+            <Senses>
+                <Sense name="IntroductionHappened" value="1" comparator="bool"></Sense>
+            </Senses>
+        </DriveElement>
     </DriveElements>
 
     <Drives>
@@ -55,6 +86,11 @@
         <Drive name="D-SayHello" priority="2">
             <DriveElements>
                 <DriveElement name="DE-SayHello"></DriveElement>
+            </DriveElements>
+        </Drive>
+        <Drive name="D-GoToTable" priority="3">
+            <DriveElements>
+                <DriveElement name="DE-GoToTable"></DriveElement>
             </DriveElements>
         </Drive>
     </Drives>

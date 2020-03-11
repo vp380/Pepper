@@ -3,22 +3,11 @@ package com.storm.pepper;
 import android.util.Log;
 
 import com.aldebaran.qi.Future;
-import com.aldebaran.qi.sdk.builder.AnimateBuilder;
-import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.ChatBuilder;
-import com.aldebaran.qi.sdk.builder.ListenBuilder;
-import com.aldebaran.qi.sdk.builder.PhraseSetBuilder;
 import com.aldebaran.qi.sdk.builder.QiChatbotBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
 import com.aldebaran.qi.sdk.builder.TopicBuilder;
-import com.aldebaran.qi.sdk.object.actuation.Animate;
-import com.aldebaran.qi.sdk.object.actuation.Animation;
 import com.aldebaran.qi.sdk.object.conversation.BodyLanguageOption;
-import com.aldebaran.qi.sdk.object.conversation.Listen;
-import com.aldebaran.qi.sdk.object.conversation.ListenResult;
-import com.aldebaran.qi.sdk.object.conversation.Phrase;
-import com.aldebaran.qi.sdk.object.conversation.PhraseSet;
-import com.aldebaran.qi.sdk.object.conversation.QiChatVariable;
 import com.aldebaran.qi.sdk.object.conversation.QiChatbot;
 import com.aldebaran.qi.sdk.object.conversation.Say;
 import com.aldebaran.qi.sdk.object.conversation.Topic;
@@ -27,14 +16,14 @@ import com.storm.posh.BaseBehaviourLibrary;
 import com.storm.posh.plan.planelements.Sense;
 import com.storm.posh.plan.planelements.action.ActionEvent;
 
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
     private static final String TAG = PepperIntroductionLibrary.class.getSimpleName();
 
     private boolean humanReady;
+    private boolean introductionHappened;
+
 
 
     @Override
@@ -42,6 +31,7 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         super.reset();
 
         humanReady = false;
+        introductionHappened = false; //used to know when the introductory conversation has finished
     }
 
     @Override
@@ -52,6 +42,10 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         switch (sense.getNameOfElement()) {
             case "HumanReady":
                 senseValue = humanReady;
+                break;
+
+            case "IntroductionHappened":
+                senseValue = introductionHappened;
                 break;
 
             default:
@@ -80,10 +74,19 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
                 introduceToHuman();
                 break;
 
+            case "GoToTable":
+                goToTable();
+                break;
+
             default:
                 super.executeAction(action);
                 break;
         }
+    }
+
+    public void goToTable() {
+        pepperLog.appendLog("Started going to table");
+        goToLocation(0);
     }
 
     public void introduceToHuman() {
@@ -95,7 +98,7 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
             FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
                 Say say = SayBuilder.with(qiContext) // Create the builder with the context.
                         .withText("Hello!") // Set the text to say.
-                        .withBodyLanguageOption(BodyLanguageOption.NEUTRAL)
+                        .withBodyLanguageOption(BodyLanguageOption.DISABLED) //text too small
                         .build(); // Build the say action.
 
                 say.run();
@@ -132,11 +135,13 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
                     pepperLog.appendLog(TAG, "Chat completed?");
                     this.talking = false;
                     this.listening = false;
+                    this.introductionHappened = true;
                     if (future.hasError()) {
                         Log.d(TAG, "Discussion finished with error.", future.getError());
                     }
                 });
             });
+
         }
     }
 }
