@@ -576,31 +576,30 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
         });
     }
 
+    /* Method that stops the autonomous abilities of the robot as shown on the QiSDK Tutorial page. */
     public void holdAwareness() {
         // Build and store the holder for the abilities.
         holder = HolderBuilder.with(qiContext)
-            .withAutonomousAbilities(AutonomousAbilitiesType.BASIC_AWARENESS)
+            .withAutonomousAbilities(
+                    AutonomousAbilitiesType.BASIC_AWARENESS,
+                    AutonomousAbilitiesType.AUTONOMOUS_BLINKING,
+                    AutonomousAbilitiesType.BACKGROUND_MOVEMENT)
             .build();
 
-        // Hold the abilities asynchronously.
-        Future<Void> holdFuture = holder.async().hold();
+        pepperLog.appendLog(TAG, "Holding autonomous abilities");
 
-        // Chain the hold with a lambda on the UI thread.
-        holdFuture.andThenConsume(Qi.onUiThread((Consumer<Void>) ignore -> {
-            // Store the abilities status.
-            abilitiesHeld = true;
-        }));
+        // Hold the abilities asynchronously.
+        holder.async().hold();
+
+        abilitiesHeld = true;
     }
 
+    /* Method that enables the autonomous abilities of the robot as shown on the QiSDK Tutorial page. */
     public void releaseAwareness() {
         // Release the holder asynchronously.
         Future<Void> releaseFuture = holder.async().release();
 
-        // Chain the release with a lambda on the UI thread.
-        releaseFuture.andThenConsume(Qi.onUiThread((Consumer<Void>) ignore -> {
-            // Store the abilities status.
             abilitiesHeld = false;
-        }));
     }
 
     // tidy up listeners

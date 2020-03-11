@@ -28,7 +28,11 @@
             </Senses>
         </CompetenceElement>
 
-        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman"></CompetenceElement>
+        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman">
+            <Senses>
+                <Sense name="IntroductionHappened" value="0" comparator="bool"></Sense>
+            </Senses>
+        </CompetenceElement>
 
         <CompetenceElement name="CE-GoToTable" triggers="AP-GoToTable">
             <Senses>
@@ -67,6 +71,7 @@
         <DriveElement name="DE-SayHello" triggers="C-SayHello" checkTime="5">
             <Senses>
                 <Sense name="HumanPresent" value="1" comparator="bool"></Sense>
+                <Sense name="IntroductionHappened" value="0" comparator="bool"></Sense>
             </Senses>
         </DriveElement>
 

@@ -18,8 +18,8 @@ import com.storm.posh.plan.planelements.action.ActionEvent;
 
 import java.util.concurrent.TimeUnit;
 
-public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
-    private static final String TAG = PepperIntroductionLibrary.class.getSimpleName();
+public class MoreAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
+    private static final String TAG = MoreAnthropomorphicWelcomeLibrary.class.getSimpleName();
 
     private boolean humanReady;
     private boolean introductionHappened;
@@ -105,7 +105,7 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
 
                 // Create a topic.
                 Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
-                        .withResource(R.raw.greet_participant) // Set the topic resource.
+                        .withResource(R.raw.greet_participant_more_anthropomorphically) // Set the topic resource.
                         .build(); // Build the topic.
 
                 // Create a new QiChatbot.
