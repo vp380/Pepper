@@ -113,8 +113,8 @@
             </Senses>
         </DriveElement>
 
-        <DriveElement name="DE-Start" triggers="C-Start" checkTime="3">
-        </DriveElement>
+        <DriveElement name="DE-Start" triggers="C-Start" checkTime="3"></DriveElement>
+
         <DriveElement name="DE-RollDie" triggers="C-RollDie" checkTime="3">
             <Senses>
                 <!--<Sense name="HumanPresent" value="1" comparator="bool"></Sense>-->

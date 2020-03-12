@@ -3,6 +3,7 @@ package com.storm.pepper;
 import android.util.Log;
 
 import com.aldebaran.qi.Future;
+import com.aldebaran.qi.sdk.QiContext;
 import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.ChatBuilder;
@@ -14,7 +15,6 @@ import com.aldebaran.qi.sdk.builder.TopicBuilder;
 import com.aldebaran.qi.sdk.object.actuation.Animate;
 import com.aldebaran.qi.sdk.object.actuation.Animation;
 import com.aldebaran.qi.sdk.object.conversation.BodyLanguageOption;
-import com.aldebaran.qi.sdk.object.conversation.Chat;
 import com.aldebaran.qi.sdk.object.conversation.Listen;
 import com.aldebaran.qi.sdk.object.conversation.ListenResult;
 import com.aldebaran.qi.sdk.object.conversation.Phrase;
@@ -35,24 +35,16 @@ import java.util.concurrent.TimeUnit;
 public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
     private static final String TAG = PepperIntroductionLibrary.class.getSimpleName();
 
-    private boolean atStart;
-    private boolean okToStart;
-    private boolean atTable;
     private boolean humanReady;
-    private boolean dieRolled;
-    private double rollResult;
+    private boolean okToStart;
 
 
     @Override
     public void reset() {
         super.reset();
 
-        atStart = false;
-        atTable = false;
-        okToStart = false;
         humanReady = false;
-        dieRolled = false;
-        rollResult = 0;
+        okToStart = false;
     }
 
     @Override
@@ -61,20 +53,11 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         boolean senseValue;
 
         switch (sense.getNameOfElement()) {
-            case "AtStart":
-                senseValue = atStart;
-                break;
-            case "OkToStart":
-                senseValue = okToStart;
-                break;
-            case "AtTable":
-                senseValue = atTable;
-                break;
             case "HumanReady":
                 senseValue = humanReady;
                 break;
-            case "DieRolled":
-                senseValue = dieRolled;
+            case "OkToStart":
+                senseValue = okToStart;
                 break;
 
             default:
@@ -83,25 +66,6 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         }
 
         pepperLog.checkedBooleanSense(TAG, sense, senseValue);
-
-        return senseValue;
-    }
-
-    @Override
-    public double getDoubleSense(Sense sense) {
-        double senseValue;
-
-        switch(sense.getNameOfElement()) {
-            case "RollResult":
-                senseValue = rollResult;
-                break;
-
-            default:
-                senseValue = super.getDoubleSense(sense);
-                break;
-        }
-
-        pepperLog.checkedDoubleSense(TAG, sense, senseValue);
 
         return senseValue;
     }
@@ -119,15 +83,11 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         switch (action.getNameOfElement()) {
 
             case "IntroduceToHuman":
-
                 introduceToHuman();
-                pepperLog.appendLog(TAG,"Introducing");
                 break;
 
-            case "GoodbyeToHuman":
-
-                goodbyeToHuman();
-                pepperLog.appendLog(TAG,"Goodbye");
+            case "ApproachTable":
+                approachTable();
                 break;
 
             default:
@@ -136,329 +96,73 @@ public class PepperIntroductionLibrary extends BaseBehaviourLibrary {
         }
     }
 
-    public void goToStart() {
-        pepperLog.appendLog("Go To Start");
-        goToLocation(0);
-    }
-
-    public void askToStart() {
-        if (talking) {
-            pepperLog.appendLog(TAG,"Cannot askToStart as already talking");
-            return;
-        } else if (listening) {
-            pepperLog.appendLog(TAG, "Cannot askToStart as already listening");
-            return;
-        }
-
-        setActive();
-        this.talking = true;
-        this.listening = true;
-
-        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
-            Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("Would you like to play a game?") // Set the text to say.
-                    .build(); // Build the say action.
-//                    .withBodyLanguageOption(BodyLanguageOption.DISABLED)
-
-            say.run();
-
-            this.talking = false;
-
-            pepperLog.appendLog(TAG, "1");
-
-            FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore2) -> {
-                // TODO: Only init this once
-                pepperLog.appendLog(TAG, "2");
-                PhraseSet phraseSet = PhraseSetBuilder.with(qiContext).withTexts("Yes", "No", "Yes please", "No thank you").build();
-                pepperLog.appendLog(TAG, "3");
-                Listen listen = ListenBuilder.with(qiContext).withPhraseSet(phraseSet).build();
-
-                listen.addOnStartedListener(() -> {
-                    pepperLog.appendLog("Started listening...");
-                    pepperLog.appendLog(TAG, "4");
-                });
-
-                this.listenFuture = listen.async().run();
-
-                listenFuture.thenConsume(future -> {
-                    this.listening = false;
-                    pepperLog.appendLog(TAG, "5");
-                    handleFuture(future, "listen_for_answer");
-
-                    try {
-                        ListenResult result = future.get();
-
-                        Phrase heardPhrase = result.getHeardPhrase();
-
-                        pepperLog.appendLog(TAG, String.format("Phrase was: %s", heardPhrase));
-
-                        if (heardPhrase.getText().equals("Yes") || heardPhrase.getText().equals("Yes please")) {
-                            this.okToStart = true;
-                            pepperLog.appendLog(TAG, "Heard the OK!");
-                        }
-
-                        listenFuture.requestCancellation();
-
-                    } catch (ExecutionException e) {
-                        pepperLog.appendLog(TAG, "Error occurred when listening for answer");
-                    } catch (CancellationException e) {
-                        pepperLog.appendLog(TAG, "Listening for answer was cancelled");
-                    }
-                });
-            });
-        });
-    }
 
     public void approachTable() {
         pepperLog.appendLog("APPROACH TABLE");
         goToLocation(1);
+        okToStart = false;
     }
 
     public void introduceToHuman() {
-        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
-            Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("Hello human!") // Set the text to say.
-                    .build(); // Build the say action.
-//                    .withBodyLanguageOption(BodyLanguageOption.DISABLED)
-
-            say.run();
-
-            // Create a topic.
-            Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
-                    .withResource(R.raw.roll_result) // Set the topic resource.
-                    .build(); // Build the topic.
-
-            // Create a new QiChatbot.
-            QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
-                    .withTopic(topic)
-                    .build();
-
-            QiChatVariable chatRollResult = qiChatbot.variable("rollResult");
-
-            chatRollResult.addOnValueChangedListener(currentValue -> {
-                Log.i(TAG, "chatRollResult: " + String.valueOf(currentValue));
-                this.rollResult = Double.valueOf(currentValue);
-                this.reset();
-            });
-
-
-            // Create a new Chat action.
-            chat = ChatBuilder.with(qiContext)
-                    .withChatbot(qiChatbot)
-                    .build();
-
-            // Add an on started listener to the Chat action.
-            chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));
-
-            // Run the Chat action asynchronously.
-            Future<Void> chatFuture = chat.async().run();
-
-            // Stop the chat when done
-            qiChatbot.addOnEndedListener(endReason -> {
-                pepperLog.appendLog(TAG, String.format("Chat ended: %s", endReason));
-                chatFuture.requestCancellation();
-            });
-
-            // Add a lambda to the action execution.
-            chatFuture.thenConsume(future -> {
-                pepperLog.appendLog(TAG, "Chat completed?");
-                this.talking = false;
-                this.listening = false;
-                this.dieRolled = true;
-                if (future.hasError()) {
-                    Log.d(TAG, "Discussion finished with error.", future.getError());
-                }
-            });
-        });
-
-    }
-
-    public void goodbyeToHuman() {
-        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
-            pepperLog.appendLog(TAG, "Starts goodbye to human");
-            Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("\\style=neutral\\ Goodbye human.") // Set the text to say.
-                    .withBodyLanguageOption(BodyLanguageOption.DISABLED)
-                    .build(); // Build the say action.
-            say.run();
-        });
-    }
-    @Override
-    protected void locationReached(int id) {
-        pepperLog.appendLog(TAG, String.format("Reached: %d", id));
-        if (id == 0) {
-            reachedStart();
-        } else if (id == 1) {
-            reachedTable();
+        pepperLog.appendLog(TAG, "Starts introducing to human");
+        //Turning off autonomous abilities (JACK DID THIS BIT JUST FOR TESTING BTW)
+        holdAwareness();
+        if (!humanPresent) {
+            pepperLog.appendLog(TAG, "Cannot approach when no human present");
+            return;
         } else {
-            pepperLog.appendLog(TAG, "Unknown location reached");
-        }
-    }
+            FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
+                Say say = SayBuilder.with(qiContext) // Create the builder with the context.
+                        .withText("Hello, I am Pepper!") // Set the text to say.
+                        .withBodyLanguageOption(BodyLanguageOption.DISABLED)
+                        .build(); // Build the say action.
 
-    private void reachedStart() {
-        this.atStart = true;
-        pepperLog.appendLog(TAG, String.format("Reached: Start"));
-    }
+                say.run();
 
-    private void reachedTable() {
-        this.atTable = true;
-        pepperLog.appendLog(TAG, String.format("Reached: Table"));
-        lookAtHuman();
-    }
+                // Create a topic.
+                Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                        .withResource(R.raw.greet_participant) // Set the topic resource.
+                        .build(); // Build the topic.
 
-    public void checkReady() {
-        pepperLog.appendLog("CHECK READY");
-        if (talking) {
-            pepperLog.appendLog(TAG,"Cannot checkReady as already talking");
-            return;
-        } else if (listening) {
-            pepperLog.appendLog(TAG, "Cannot checkReady as already listening");
-            return;
-        }
+                // Create a new QiChatbot.
+                QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
+                        .withTopic(topic)
+                        .build();
 
-        setActive();
+                //Turn off animations when speaking JACK
+                qiChatbot.setSpeakingBodyLanguage(BodyLanguageOption.DISABLED);
 
-        this.talking = true;
-        this.listening = true;
+                // Create a new Chat action.
+                chat = ChatBuilder.with(qiContext)
+                        .withChatbot(qiChatbot)
+                        .build();
 
-        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
-            Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("Are you ready to continue?") // Set the text to say.
-                    .build(); // Build the say action.
-//                    .withBodyLanguageOption(BodyLanguageOption.DISABLED)
+                //Turn off animations when listening JACK
+                chat.setListeningBodyLanguage(BodyLanguageOption.DISABLED);
 
-            say.run();
+                // Add an on started listener to the Chat action.
+                chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));
 
-            this.talking = false;
+                // Run the Chat action asynchronously.
+                Future<Void> chatFuture = chat.async().run();
 
-            FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore2) -> {
-                // TODO: Only init this once
-                PhraseSet phraseSet = PhraseSetBuilder.with(qiContext).withTexts("Yes", "No").build();
-                Listen listen = ListenBuilder.with(qiContext).withPhraseSet(phraseSet).build();
+                // Stop the chat when done
+                qiChatbot.addOnEndedListener(endReason -> {
+                    pepperLog.appendLog(TAG, String.format("Chat ended: %s", endReason));
+                    chatFuture.requestCancellation();
+                });
 
-                this.listenFuture = listen.async().run();
-
-                listenFuture.thenConsume(future -> {
+                // Add a lambda to the action execution.
+                chatFuture.thenConsume(future -> {
+                    pepperLog.appendLog(TAG, "Chat completed?");
+                    this.talking = false;
                     this.listening = false;
-
-                    try {
-                        ListenResult result = future.get();
-
-                        Phrase heardPhrase = result.getHeardPhrase();
-
-                        if (heardPhrase.getText().equals("Yes")) {
-                            this.humanReady = true;
-                        }
-
-                        listenFuture.requestCancellation();
-
-                    } catch (ExecutionException e) {
-                        pepperLog.appendLog(TAG, "Error occurred when listening for answer");
-                    } catch (CancellationException e) {
-                        pepperLog.appendLog(TAG, "Listening for answer was cancelled");
+                    okToStart = true;
+                    if (future.hasError()) {
+                        Log.d(TAG, "Discussion finished with error.", future.getError());
                     }
                 });
             });
-        });
-    }
-
-    public void rollDie() {
-        pepperLog.appendLog("ROLL DIE");
-
-        setAnimating(true);
-
-        // Create an animation object.
-        Future<Animation> myAnimationFuture = AnimationBuilder.with(qiContext)
-                .withResources(R.raw.roll)
-                .buildAsync();
-
-        myAnimationFuture.andThenConsume(myAnimation -> {
-            Animate animate = AnimateBuilder.with(qiContext)
-                    .withAnimation(myAnimation)
-                    .build();
-
-            // Run the action synchronously in this thread
-            animate.run();
-
-            pepperLog.appendLog(TAG, "HAVE ROLLED");
-            this.dieRolled = true;
-            setAnimating(false);
-        });
-
-    }
-
-    public void askForResult() {
-        pepperLog.appendLog("ASK FOR RESULT");
-        if (talking) {
-            pepperLog.appendLog(TAG,"Cannot askForResult as already talking");
-            return;
-        } else if (listening) {
-            pepperLog.appendLog(TAG, "Cannot askForResult as already listening");
-            return;
         }
-
-        setActive();
-        this.talking = true;
-        this.listening = true;
-
-        if (lookAtFuture != null) {
-            pepperLog.appendLog(TAG, "Stop looking");
-            lookAtFuture.requestCancellation();
-        }
-
-        FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
-            Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("What is the number on the dice?") // Set the text to say.
-                    .build(); // Build the say action.
-//                    .withBodyLanguageOption(BodyLanguageOption.DISABLED)
-
-            say.run();
-
-            // Create a topic.
-            Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
-                    .withResource(R.raw.roll_result) // Set the topic resource.
-                    .build(); // Build the topic.
-
-            // Create a new QiChatbot.
-            QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
-                    .withTopic(topic)
-                    .build();
-
-            QiChatVariable chatRollResult = qiChatbot.variable("rollResult");
-
-            chatRollResult.addOnValueChangedListener(currentValue -> {
-                Log.i(TAG, "chatRollResult: " + String.valueOf(currentValue));
-                this.rollResult = Double.valueOf(currentValue);
-                this.reset();
-            });
-
-
-            // Create a new Chat action.
-            chat = ChatBuilder.with(qiContext)
-                    .withChatbot(qiChatbot)
-                    .build();
-
-            // Add an on started listener to the Chat action.
-            chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));
-
-            // Run the Chat action asynchronously.
-            Future<Void> chatFuture = chat.async().run();
-
-            // Stop the chat when done
-            qiChatbot.addOnEndedListener(endReason -> {
-                pepperLog.appendLog(TAG, String.format("Chat ended: %s", endReason));
-                chatFuture.requestCancellation();
-            });
-
-            // Add a lambda to the action execution.
-            chatFuture.thenConsume(future -> {
-                pepperLog.appendLog(TAG, "Chat completed?");
-                this.talking = false;
-                this.listening = false;
-                if (future.hasError()) {
-                    Log.d(TAG, "Discussion finished with error.", future.getError());
-                }
-            });
-        });
     }
 }

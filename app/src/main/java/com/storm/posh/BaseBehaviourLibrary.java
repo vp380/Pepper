@@ -578,8 +578,13 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
 
     public void holdAwareness() {
         // Build and store the holder for the abilities.
+        // Modified by Jack to limit additional anthropomorhic behaviours
         holder = HolderBuilder.with(qiContext)
-            .withAutonomousAbilities(AutonomousAbilitiesType.BASIC_AWARENESS)
+                .withAutonomousAbilities(
+                        AutonomousAbilitiesType.BACKGROUND_MOVEMENT,
+                        AutonomousAbilitiesType.BASIC_AWARENESS,
+                        AutonomousAbilitiesType.AUTONOMOUS_BLINKING
+                )
             .build();
 
         // Hold the abilities asynchronously.
@@ -694,7 +699,8 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
     protected void lookAtHuman() {
         lookAtHuman(LookAtMovementPolicy.HEAD_AND_BASE);
     }
-    protected void lookAtHuman(LookAtMovementPolicy policy) {
+
+    public void lookAtHuman(LookAtMovementPolicy policy) {
         if (animating) {
             pepperLog.appendLog(TAG, "Already animating. Cannot look at human");
             return;
