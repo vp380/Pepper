@@ -84,10 +84,8 @@ public class MainActivity extends RobotActivity implements PepperLog {
         planner = new Planner(this);
 
         // configure for chosen plan
-        planResourceId = R.raw.plan_die;
-        behaviourLibrary = new DieBehaviourLibrary();
-//        planResourceId = R.raw.plan_annoy;
-//        behaviourLibrary = new AnnoyBehaviourLibrary();
+        planResourceId = R.raw.plan_investment;
+        behaviourLibrary = new InvestmentBehaviourLibrary();
         // end configure for chosen plan
 
         behaviourLibrary.setPepperLog(this);
@@ -279,7 +277,7 @@ public class MainActivity extends RobotActivity implements PepperLog {
 
         displayPlan();
     }
-
+    /*Displays the action selection mechanism on the right of the screen.*/
     private void displayPlan() {
         Plan plan = Plan.getInstance();
 

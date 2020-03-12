@@ -1,0 +1,26 @@
+topic: ~investment_rules()
+# Defining extra concepts out of words or group of words
+#concept:(hello) [hello hi hey "good morning" greetings]
+
+# Replying to speech
+#u:(~hello) ~hello
+
+concept: (positive) [yes yeah yup correct "yes please"]
+concept: (negative) [no nope "no thanks" nah]
+
+u:(~positive)
+Great! Let's get started. $understood=true ^endDiscuss(yes)
+
+u:(~negative)
+OK, do you want me to go over the rules again?
+    u1:(~positive)
+    So, basically, we're going to play one round of the game. In this game, you have 5 pounds,
+    and you can give me as much or as little of that as you'd like. I then triple that, so multiply
+    it by 3, and then I decide how much I give you in return. Is that clear?
+        u2:(~positive)
+        Great! Let's get started. $understood=true ^endDiscuss(yes)
+        u2:(~negative)
+        In that case, I'll hand it over to Jen and let her explain, she can probably do a better job than me. $understood=false ^endDiscuss(no)
+    u1:(~negative)
+    In that case, I'll hand it over to Jen and let her explain, she can probably do a better job than me. $understood=false ^endDiscuss(no)
+

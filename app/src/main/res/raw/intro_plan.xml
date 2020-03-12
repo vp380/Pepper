@@ -1,40 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Plan>
     <ActionPatterns>
-        <ActionPattern name="AP-BatteryPrompt">
+        <ActionPattern name="AP-IntroduceToHuman">
             <Actions>
-                <Action name="PromptForBatteryCharge"></Action>
+                <Action name="IntroduceToHuman"></Action>
             </Actions>
         </ActionPattern>
-
-        <ActionPattern name="AP-GoToStart">
+        <ActionPattern name="AP-GoodbyeToHuman">
             <Actions>
-                <Action name="GoToStart"></Action>
-            </Actions>
-        </ActionPattern>
-        <ActionPattern name="AP-AskToStart">
-            <Actions>
-                <Action name="AskToStart"></Action>
-            </Actions>
-        </ActionPattern>
-        <ActionPattern name="AP-ApproachTable">
-            <Actions>
-                <Action name="ApproachTable"></Action>
-            </Actions>
-        </ActionPattern>
-        <ActionPattern name="AP-CheckReady">
-            <Actions>
-                <Action name="CheckReady"></Action>
-            </Actions>
-        </ActionPattern>
-        <ActionPattern name="AP-RollDie">
-            <Actions>
-                <Action name="RollDie"></Action>
-            </Actions>
-        </ActionPattern>
-        <ActionPattern name="AP-AskForResult">
-            <Actions>
-                <Action name="AskForResult"></Action>
+                <Action name="GoodbyeToHuman"></Action>
             </Actions>
         </ActionPattern>
     </ActionPatterns>
@@ -77,6 +51,16 @@
             </Senses>
         </CompetenceElement>
         <CompetenceElement name="CE-AskForResult" triggers="AP-AskForResult"></CompetenceElement>
+        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman">
+            <Senses>
+                <Sense name="BatteryLow" value="0" comparator="bool"></Sense>
+            </Senses>
+        </CompetenceElement>
+        <CompetenceElement name="CE-SayGoodbye" triggers="AP-GoodbyeToHuman">
+            <Senses>
+                <Sense name="BatteryLow" value="0" comparator="bool"></Sense>
+            </Senses>
+        </CompetenceElement>
     </CompetenceElements>
 
     <Competences>
@@ -104,6 +88,18 @@
                 <CompetenceElement name="CE-AskForResult"></CompetenceElement>
             </CompetenceElements>
         </Competence>
+
+        <Competence name="C-SayHello">
+            <CompetenceElements>
+                <CompetenceElement name="CE-SayHello"></CompetenceElement>
+            </CompetenceElements>
+        </Competence>
+
+        <Competence name="C-SayGoodbye">
+            <CompetenceElements>
+                <CompetenceElement name="CE-SayGoodbye"></CompetenceElement>
+            </CompetenceElements>
+        </Competence>
     </Competences>
 
     <DriveElements>
@@ -113,15 +109,15 @@
             </Senses>
         </DriveElement>
 
-        <DriveElement name="DE-Start" triggers="C-Start" checkTime="3"></DriveElement>
-
-        <DriveElement name="DE-RollDie" triggers="C-RollDie" checkTime="3">
+        <DriveElement name="DE-SayHello" triggers="C-SayHello" checkTime="5">
             <Senses>
                 <!--<Sense name="HumanPresent" value="1" comparator="bool"></Sense>-->
-                <Sense name="OkToStart" value="1" comparator="bool"></Sense>
+                <!--<Sense name="HumanPresent" value="1" comparator="bool"></Sense>-->
+                <Sense name="DieRolled" value="0" comparator="bool"></Sense>
             </Senses>
         </DriveElement>
-        <DriveElement name="DE-GetResult" triggers="C-GetResult" checkTime="3">
+
+        <DriveElement name="DE-SayGoodbye" triggers="C-SayGoodbye" checkTime="5">
             <Senses>
                 <!--<Sense name="HumanPresent" value="1" comparator="bool"></Sense>-->
                 <Sense name="DieRolled" value="1" comparator="bool"></Sense>
@@ -135,29 +131,14 @@
                 <DriveElement name="DE-BatteryPrompt"></DriveElement>
             </DriveElements>
         </Drive>
-
-        <Drive name="D-Start" priority="2">
-            <Senses>
-                <Sense name="OkToStart" value="1" comparator="bool"></Sense>
-            </Senses>
+        <Drive name="D-SayHello" priority="2">
             <DriveElements>
-                <DriveElement name="DE-Start"></DriveElement>
+                <DriveElement name="DE-SayHello"></DriveElement>
             </DriveElements>
         </Drive>
-        <Drive name="D-RollDie" priority="3">
-            <Senses>
-                <Sense name="DieRolled" value="1" comparator="bool"></Sense>
-            </Senses>
+        <Drive name="D-SayGoodbye" priority="2">
             <DriveElements>
-                <DriveElement name="DE-RollDie"></DriveElement>
-            </DriveElements>
-        </Drive>
-        <Drive name="D-GetResult" priority="4">
-            <Senses>
-                <Sense name="RollResult" value="0" comparator="gt"></Sense>
-            </Senses>
-            <DriveElements>
-                <DriveElement name="DE-GetResult"></DriveElement>
+                <DriveElement name="DE-SayGoodbye"></DriveElement>
             </DriveElements>
         </Drive>
     </Drives>
