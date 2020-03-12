@@ -99,7 +99,7 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
             FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
                 Say say = SayBuilder.with(qiContext) // Create the builder with the context.
                         .withText("Hello!") // Set the text to say.
-                        .withBodyLanguageOption(BodyLanguageOption.DISABLED) //text too small
+                        .withBodyLanguageOption(gestures) //text too small
                         .build(); // Build the say action.
 
                 say.run();
@@ -114,10 +114,14 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
                         .withTopic(topic)
                         .build();
 
+                qiChatbot.setSpeakingBodyLanguage(gestures);
+
                 // Create a new Chat action.
                 chat = ChatBuilder.with(qiContext)
                         .withChatbot(qiChatbot)
                         .build();
+
+                chat.setListeningBodyLanguage(gestures);
 
                 // Add an on started listener to the Chat action.
                 chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));

@@ -25,6 +25,7 @@ import com.aldebaran.qi.sdk.object.actuation.LocalizeAndMap;
 import com.aldebaran.qi.sdk.object.actuation.LookAt;
 import com.aldebaran.qi.sdk.object.actuation.LookAtMovementPolicy;
 import com.aldebaran.qi.sdk.object.actuation.Mapping;
+import com.aldebaran.qi.sdk.object.conversation.BodyLanguageOption;
 import com.aldebaran.qi.sdk.object.conversation.Chat;
 import com.aldebaran.qi.sdk.object.conversation.ListenResult;
 import com.aldebaran.qi.sdk.object.conversation.Say;
@@ -76,6 +77,9 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
     protected boolean safeToMap = true;
     protected boolean mappingInProgress = false;
     protected boolean mappingComplete = false;
+
+    protected boolean anthropomorphic;
+    protected BodyLanguageOption gestures;
 
     // Store the saved locations.
     private Map<Integer, FreeFrame> savedLocations = new HashMap<>();
@@ -159,6 +163,16 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
         animating = false;
         facingNearHuman = false;
         safeToMap = true;
+
+        anthropomorphic = false;
+
+        if (!anthropomorphic){
+            holdAwareness();
+            gestures = BodyLanguageOption.DISABLED;
+        }
+        else{
+            gestures = BodyLanguageOption.NEUTRAL;
+        }
 
         // Don't reset these
 //        humanPresent = false;
