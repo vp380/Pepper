@@ -164,7 +164,7 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
         facingNearHuman = false;
         safeToMap = true;
 
-        anthropomorphic = false;
+        anthropomorphic = true;
 
         if (!anthropomorphic){
             holdAwareness();
@@ -693,12 +693,14 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
         });
     }
 
-    private Human getClosestHuman(List<Human> humans) {
+    public Human getClosestHuman(List<Human> humans) {
         // Get the robot frame.
         final Frame robotFrame = qiContext.getActuation().robotFrame();
 
         // Compare humans using the distance.
         Comparator<Human> comparator = (human1, human2) -> Double.compare(getDistance(robotFrame, human1), getDistance(robotFrame, human2));
+
+        pepperLog.appendLog(TAG, "Found the closest human.");
 
         // Return the closest human.
         return Collections.min(humans, comparator);

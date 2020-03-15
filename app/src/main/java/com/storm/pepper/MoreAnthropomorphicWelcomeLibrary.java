@@ -23,6 +23,7 @@ public class MoreAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
 
     private boolean humanReady;
     private boolean introductionHappened;
+    private boolean atTable;
 
 
 
@@ -32,6 +33,7 @@ public class MoreAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
 
         humanReady = false;
         introductionHappened = false; //used to know when the introductory conversation has finished
+        atTable = false;
     }
 
     @Override
@@ -48,7 +50,11 @@ public class MoreAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
                 senseValue = introductionHappened;
                 break;
 
+            case "AtTable":
+                senseValue = atTable;
+                break;
             default:
+
                 senseValue = super.getBooleanSense(sense);
                 break;
         }
@@ -82,6 +88,22 @@ public class MoreAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
                 super.executeAction(action);
                 break;
         }
+    }
+
+    @Override
+    protected void locationReached(int id) {
+        pepperLog.appendLog(TAG, String.format("Reached: %d", id));
+        if (id == 0) {
+            reachedTable();
+        } else {
+            pepperLog.appendLog(TAG, "Unknown location reached");
+        }
+    }
+
+    private void reachedTable() {
+        this.atTable = true;
+        pepperLog.appendLog(TAG, String.format("Reached: Table"));
+        lookAtHuman();
     }
 
     public void goToTable() {

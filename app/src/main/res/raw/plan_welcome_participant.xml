@@ -28,7 +28,7 @@
             </Senses>
         </CompetenceElement>
 
-        <CompetenceElement name="CE-SayHello" triggers="AP-IntroduceToHuman">
+        <CompetenceElement name="CE-IntroduceToHuman" triggers="AP-IntroduceToHuman">
             <Senses>
                 <Sense name="IntroductionHappened" value="0" comparator="bool"></Sense>
             </Senses>
@@ -48,9 +48,9 @@
             </CompetenceElements>
         </Competence>
 
-        <Competence name="C-SayHello">
+        <Competence name="C-IntroduceToHuman">
             <CompetenceElements>
-                <CompetenceElement name="CE-SayHello"></CompetenceElement>
+                <CompetenceElement name="CE-IntroduceToHuman"></CompetenceElement>
             </CompetenceElements>
         </Competence>
 
@@ -68,7 +68,7 @@
             </Senses>
         </DriveElement>
 
-        <DriveElement name="DE-SayHello" triggers="C-SayHello" checkTime="5">
+        <DriveElement name="DE-IntroduceToHuman" triggers="C-IntroduceToHuman" checkTime="5">
             <Senses>
                 <Sense name="HumanPresent" value="1" comparator="bool"></Sense>
                 <Sense name="IntroductionHappened" value="0" comparator="bool"></Sense>
@@ -78,6 +78,7 @@
         <DriveElement name="DE-GoToTable" triggers="C-GoToTable" checkTime="5">
             <Senses>
                 <Sense name="IntroductionHappened" value="1" comparator="bool"></Sense>
+                <Sense name="AtTable" value="0" comparator="bool"></Sense>
             </Senses>
         </DriveElement>
     </DriveElements>
@@ -88,9 +89,9 @@
                 <DriveElement name="DE-BatteryPrompt"></DriveElement>
             </DriveElements>
         </Drive>
-        <Drive name="D-SayHello" priority="2">
+        <Drive name="D-IntroduceToHuman" priority="2">
             <DriveElements>
-                <DriveElement name="DE-SayHello"></DriveElement>
+                <DriveElement name="DE-IntroduceToHuman"></DriveElement>
             </DriveElements>
         </Drive>
         <Drive name="D-GoToTable" priority="3">

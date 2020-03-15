@@ -3,25 +3,25 @@ topic: ~greet_participant()
 # Defining extra concepts out of words or group of words
 
 concept:(greetings) ^rand[hello hi hey "hey there"]
-concept:(self) [I'm "I am"]
-concept:(introduction) [~self "My name is"]
 concept:(intro_feeling) ^rand[nice glad happy]
+concept:(self) [I'm "I am"]
 concept:(good) ^rand[great well {very} good]
-concept:(yes) [yes yep yeah]
-concept:(no) [no nah nope]
+concept:(yes) [yes yep yeah "kind of" "probably" "I think so"]
+concept:(no) [no nah nope "not really"]
 
 # Replying to speech
-u:(~greetings) ~greetings My name is Pepper! What is your name? ^endDiscuss(yes)
-    u1:(~introduction _*) ~self ~intro_feeling to meet you! Is your day going well so far?
-    $name = $1
+u:(~greetings) ~greetings my name is Pepper! What is your name?
+
+    u1:(*) ~self ~intro_feeling to meet you! Is your day going well so far?
+
         u2:(*) I am glad to hear that! Am I what you were expecting?
 
-            u3:(~yes *) Good, I would hate to dissapoint you!
+            u3:(~yes *) Good, I would hate to disappoint you! ^endDiscuss(yes)
 
-            Now, I will give you a quick overview of how the experimental study is going to take place.
-            The study consists of you playing two games. In the first game, called honesty game, you will have to roll a dice.
-            In the second game, called investment game, you will have to invest a sum of money. The rules of both games will
-            be explained in detail at the table.
+#            Now, I will give you an overview of how the experimental study is going to take place.
+#            The study consists of two games. In the first game, called honesty game, you will have to roll a dice.
+#            In the second game, called investment game, you will have to invest some money. The rules of both games will
+#            be explained in detail at the table.
 
             Is this clear?
 
@@ -35,10 +35,10 @@ u:(~greetings) ~greetings My name is Pepper! What is your name? ^endDiscuss(yes)
 
             u3:(~no *) Well, life is full of surprises!
 
-            Now, I will give you a quick overview of how the experimental study is going to take place.
-            The study consists of you playing two games. In the first game, called honesty game, you will have to roll a dice.
-            In the second game, called investment game, you will have to invest a sum of money. The rules of both games will
-            be explained in detail at the table.
+#            Now, I will give you an overview of how the experimental study is going to take place.
+#            The study consists of two games. In the first game, called honesty game, you will have to roll a dice.
+#            In the second game, called investment game, you will have to invest some money. The rules of both games will
+#            be explained in detail at the table.
 
             Is this clear?
 
@@ -50,6 +50,6 @@ u:(~greetings) ~greetings My name is Pepper! What is your name? ^endDiscuss(yes)
 
                 u4:(~no *) No worries, the rules will be explained in detail at the table, before each game starts!
 
-                Now follow me to the table and take a seat please!
+                Now follow me to the table and take a seat please! ^endDiscuss(yes)
 
 

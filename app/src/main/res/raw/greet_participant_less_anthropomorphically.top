@@ -11,8 +11,8 @@ concept:(yes) [yes yep yeah]
 concept:(no) [no nah nope]
 
 # Replying to speech
-u:(~greetings) ~greetings \vct=70\ \readmode=word\ My name is Pepper! What is your name?
-    u1:(~introduction _*) ~self ~intro_feeling to meet you! Is your day going well so far?
+u:(~greetings) ~greetings \vct=70\ \readmode=word\ My name is Pepper What is your name?
+    u1:(*) ~self ~intro_feeling to meet you! Is your day going well so far?
     $name = $1
         u2:(*) I am glad to hear that! Am I what you were expecting?
 
