@@ -10,45 +10,46 @@ concept:(good) ^rand[great well {very} good]
 concept:(yes) [yes yep yeah]
 concept:(no) [no nah nope]
 
+#\readmode=word\
 # Replying to speech
-u:(~greetings) ~greetings \vct=70\ \readmode=word\ My name is Pepper What is your name?
-    u1:(*) ~self ~intro_feeling to meet you! Is your day going well so far?
+u:(~greetings) \vct=70\ \rspd=70\~greetings My name is Pepper What is your name? ^endDiscuss(yes)
+    u1:(*) \vct=70\ \rspd=70\ ~self ~intro_feeling to meet you! Is your day going well so far?
     $name = $1
-        u2:(*) I am glad to hear that! Am I what you were expecting?
+        u2:(*) \vct=70\ \rspd=70\ I am glad to hear that! Am I what you were expecting?
 
             u3:(~yes *) Good, I would hate to disappoint you!
 
-            Now, I will give you a quick overview of how the experimental study is going to take place.
-            The study consists of you playing two games. In the first game, called honesty game, you will have to roll a dice.
-            In the second game, called investment game, you will have to invest a sum of money. The rules of both games will
-            be explained in detail at the table.
+#            Now, I will give you a quick overview of how the experimental study is going to take place.
+#            The study consists of you playing two games. In the first game, called honesty game, you will have to roll a dice.
+#            In the second game, called investment game, you will have to invest a sum of money. The rules of both games will
+#            be explained in detail at the table.
 
             Is this clear?
 
-                u4:(~yes *) Great! Before we proceed, would you like anything to drink? We have water!
+                u4:(~yes *) \vct=70\ Great! Before we proceed, would you like anything to drink? We have water!
 
-                    u5:(~yes *) Very well, I will tell Jen to bring you some water. Now follow me to the table and take a seat please! ^endDiscuss(yes)
+                    u5:(~yes *) \vct=70\ Very well, I will tell Jen to bring you some water. Now follow me to the table and take a seat please! ^endDiscuss(yes)
 
-                    u5:(~no *) Okay, if you want anything to drink at any point, you can ask Jen! Now follow me to the table and take a seat please! ^endDiscuss(yes)
+                    u5:(~no *) \vct=70\ Okay, if you want anything to drink at any point, you can ask Jen! Now follow me to the table and take a seat please! ^endDiscuss(yes)
 
-                u4:(~no *) No worries, the rules will be explained in detail at the table, before each game starts!
+                u4:(~no *) \vct=70\ No worries, the rules will be explained in detail at the table, before each game starts!
 
-            u3:(~no *) Well, life is full of surprises!
+            u3:(~no *) \vct=70\ Well, life is full of surprises!
 
-            Now, I will give you a quick overview of how the experimental study is going to take place.
-            The study consists of you playing two games. In the first game, called honesty game, you will have to roll a dice.
-            In the second game, called investment game, you will have to invest a sum of money. The rules of both games will
-            be explained in detail at the table.
+#            Now, I will give you a quick overview of how the experimental study is going to take place.
+#            The study consists of you playing two games. In the first game, called honesty game, you will have to roll a dice.
+#            In the second game, called investment game, you will have to invest a sum of money. The rules of both games will
+#            be explained in detail at the table.
 
             Is this clear?
 
-                u4:(~yes *) Great! Before we proceed, would you like anything to drink? We have water!
+                u4:(~yes *) \vct=70\ Great! Before we proceed, would you like anything to drink? We have water!
 
-                    u5:(~yes *) Very well, I will tell Jen to bring you some water. Now follow me to the table and take a seat please! ^endDiscuss(yes)
+                    u5:(~yes *) \vct=70\ Very well, I will tell Jen to bring you some water. Now follow me to the table and take a seat please! ^endDiscuss(yes)
 
-                    u5:(~no *) Okay, if you want anything to drink at any point, you can ask Jen! Now follow me to the table and take a seat please! ^endDiscuss(yes)
+                    u5:(~no *) \vct=70\ Okay, if you want anything to drink at any point, you can ask Jen! Now follow me to the table and take a seat please! ^endDiscuss(yes)
 
-                u4:(~no *) No worries, the rules will be explained in detail at the table, before each game starts!
+                u4:(~no *) \vct=70\ No worries, the rules will be explained in detail at the table, before each game starts!
 
                 Now follow me to the table and take a seat please!
 

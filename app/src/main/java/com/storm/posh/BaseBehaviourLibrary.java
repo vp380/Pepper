@@ -164,7 +164,7 @@ public class BaseBehaviourLibrary implements BehaviourLibrary, RobotLifecycleCal
         facingNearHuman = false;
         safeToMap = true;
 
-        anthropomorphic = true;
+        anthropomorphic = false;
 
         if (!anthropomorphic){
             holdAwareness();

@@ -23,6 +23,7 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
 
     private boolean humanReady;
     private boolean introductionHappened;
+    private boolean atTable;
 
 
 
@@ -32,6 +33,7 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
 
         humanReady = false;
         introductionHappened = false; //used to know when the introductory conversation has finished
+        atTable = false;
     }
 
     @Override
@@ -57,6 +59,23 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
 
         return senseValue;
     }
+
+    @Override
+    protected void locationReached(int id) {
+        pepperLog.appendLog(TAG, String.format("Reached: %d", id));
+        if (id == 0) {
+            reachedTable();
+        } else {
+            pepperLog.appendLog(TAG, "Unknown location reached");
+        }
+    }
+
+    private void reachedTable() {
+        this.atTable = true;
+        pepperLog.appendLog(TAG, String.format("Reached: Table"));
+        lookAtHuman();
+    }
+
 
     @Override
     public void executeAction(ActionEvent action) {
@@ -98,7 +117,7 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
         } else {
             FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
                 Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                        .withText("Hello!") // Set the text to say.
+                        .withText("\\vct=70\\ Hello!") // Set the text to say.
                         .withBodyLanguageOption(gestures) //text too small
                         .build(); // Build the say action.
 
