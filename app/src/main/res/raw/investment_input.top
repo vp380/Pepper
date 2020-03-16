@@ -19,13 +19,13 @@ u:(_~pounds [pound pounds quid])
 $pounds=$1
 You said $pounds pounds, is that correct?
     u1:(~positive) Great!^endDiscuss(yes)
-    u2:(~negative) Sorry! Try saying it again.
+    u1:(~negative) Sorry! Try saying it again.
 
 u:(_~pence [pence p])
 $pence=$1
 You said $pence pence, is that correct?
     u1:(~positive) Great!^endDiscuss(yes)
-    u2:(~negative) Sorry! Try saying it again.
+    u1:(~negative) Sorry! Try saying it again.
 
 u:(_~pounds {[pound pounds quid]} {and} _~pence {[pence p]})
 $pounds=$1

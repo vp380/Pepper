@@ -1,0 +1,10 @@
+topic: ~investment_listen()
+# Defining extra concepts out of words or group of words
+concept:(finished) [done finished over submitted]
+concept: (positive) [yes yeah yup correct "yes please"]
+concept: (negative) [no nope "no thanks" nah]
+
+# Replying to speech
+u:(~finished) Did you say you were done?
+    u1:(~positive) Great! ^endDiscuss(yes)
+    u1:(~negative) Sorry! Let me know when you've submitted.

@@ -14,7 +14,7 @@ Great! Let's get started. $understood=true ^endDiscuss(yes)
 u:(~negative)
 OK, do you want me to go over the rules again?
     u1:(~positive)
-    So, basically, we're going to play one round of the game. In this game, you have 5 pounds,
+    So, basically, we're going to play one round of the game. In this game, you have some money,
     and you can give me as much or as little of that as you'd like. I then triple that, so multiply
     it by 3, and then I decide how much I give you in return. Is that clear?
         u2:(~positive)

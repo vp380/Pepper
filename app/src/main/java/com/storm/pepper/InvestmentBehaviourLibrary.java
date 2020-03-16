@@ -59,6 +59,12 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
     private boolean anthropomorphic;
     private BodyLanguageOption gestures;
     private LookAt lookAt;
+    private String gameIntro;
+    private String rulesIntro;
+    private String experimenterString;
+    private String goodbyeString;
+    private Topic introTopic;
+    private Topic gameTopic;
 
     @Override
     public void reset() {
@@ -76,13 +82,42 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
         played = false;
         goodbye = false;
 
-        anthropomorphic = true;
+        anthropomorphic = false;
         if (!anthropomorphic){
             holdAwareness();
             gestures = BodyLanguageOption.DISABLED;
+            rulesIntro = "\\vct=70\\ \\readmode=word\\ Before we begin i will go over the rules to make sure you understand them. " +
+                    "You will recieve some money, and you will decide how much of that you want to give to me. " +
+                    "i will receive 3 times that amount, and then you will be given a portion of that amount back" +
+                    "You will not know how much you will receive until after the experiment is complete. " +
+                    "Is that clear?";
+            gameIntro = "\\vct=70\\ \\readmode=word\\ i will remain silent until you have input your decision on the computer.";
+            experimenterString = "\\vct=70\\ \\readmode=word\\ Thank you, i shall take it from here.";
+            goodbyeString = "\\vct=70\\ \\readmode=word\\ That's the game done - thank you for your participation.";
+            introTopic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withResource(R.raw.investment_rules_na) // Set the topic resource.
+                    .build(); // Build the topic.
+            gameTopic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withResource(R.raw.investment_listen_na) // Set the topic resource.
+                    .build(); // Build the topic.
         }
         else{
             gestures = BodyLanguageOption.NEUTRAL;
+            rulesIntro = "Before we begin I'm just going to go over the rules to make sure you understand them. " +
+                    "You'll be given some money, and you'll decide how much of that you want to give to me. " +
+                    "I'll get 3 times that amount, and then choose how much of it I want to give back to you. " +
+                    "You won't know how much you'll get until after the experiment is done. " +
+                    "Is that clear?";
+            gameIntro = "I don't want to say anything that could influence your choice, so I'll just keep quiet until you're done. Just input your answer on the laptop, and tell me when you're finished.";
+            experimenterString = "Thanks for that, I'll take it from here!";
+            goodbyeString = "That's the game done - thank you for all the money you may or may not have given me!";
+            introTopic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withResource(R.raw.investment_rules) // Set the topic resource.
+                    .build(); // Build the topic.
+            gameTopic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withResource(R.raw.investment_listen) // Set the topic resource.
+                    .build(); // Build the topic.
+
         }
     }
 
@@ -209,10 +244,7 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
 
         FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("Before we begin I'm just going to go over the rules to make sure you understand them. " +
-                            "You'll be given some money, and you'll decide how much of that you want to give to me. " +
-                            "I'll receive 3 times that amount, and then choose how much of it I want to give back to you. " +
-                            "Is that clear?") // Set the text to say.
+                    .withText(rulesIntro) // Set the text to say.
                     .withBodyLanguageOption(gestures)
                     .build(); // Build the say action.
 
@@ -220,14 +252,10 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
 
             // \\readmode=word\\ makes pepper really stilted, but slow to talk
 
-            // Create a topic.
-            Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
-                    .withResource(R.raw.investment_rules) // Set the topic resource.
-                    .build(); // Build the topic.
 
             // Create a new QiChatbot.
             QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
-                    .withTopic(topic)
+                    .withTopic(introTopic)
                     .build();
 
             qiChatbot.setSpeakingBodyLanguage(gestures);
@@ -295,12 +323,12 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
 
         FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("Tell me how much money you want to give me.") // Set the text to say.
+                    .withText(rulesIntro) // Set the text to say.
                     .withBodyLanguageOption(gestures)
                     .build(); // Build the say action.
 
             say.run();
-
+            /*
             // Create a topic.
             Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
                     .withResource(R.raw.investment_input) // Set the topic resource.
@@ -360,11 +388,56 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
                     Log.d(TAG, "Discussion finished with error.", future.getError());
                 }
             });
+
+             */
+            // Create a topic.
+            /*
+            Topic topic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withResource(R.raw.investment_listen) // Set the topic resource.
+                    .build(); // Build the topic.
+
+             */
+
+            // Create a new QiChatbot.
+            QiChatbot qiChatbot = QiChatbotBuilder.with(qiContext)
+                    .withTopic(gameTopic)
+                    .build();
+
+            qiChatbot.setSpeakingBodyLanguage(gestures);
+            // Create a new Chat action.
+            chat = ChatBuilder.with(qiContext)
+                    .withChatbot(qiChatbot)
+                    .build();
+
+            chat.setListeningBodyLanguage(gestures);
+
+            // Add an on started listener to the Chat action.
+            chat.addOnStartedListener(() -> Log.d(TAG, "Chat started."));
+
+            // Run the Chat action asynchronously.
+            Future<Void> chatFuture = chat.async().run();
+
+            // Stop the chat when done
+            qiChatbot.addOnEndedListener(endReason -> {
+                pepperLog.appendLog(TAG, String.format("Chat ended: %s", endReason));
+                chatFuture.requestCancellation();
+            });
+
+            // Add a lambda to the action execution.
+            chatFuture.thenConsume(future -> {
+                pepperLog.appendLog(TAG, "Chat completed?");
+                this.talking = false;
+                this.listening = false;
+                this.played = true;
+                if (future.hasError()) {
+                    Log.d(TAG, "Discussion finished with error.", future.getError());
+                }
+            });
         });
     }
 
     public void goodbye(){
-        pepperLog.appendLog("Playing the investment game");
+        pepperLog.appendLog("Saying goodbye");
         if (talking) {
             pepperLog.appendLog(TAG,"Cannot askForResult as already talking");
             return;
@@ -384,12 +457,15 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
 
         FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("That's the game done - thank you for all the money you may or may not have given me!") // Set the text to say.
+                    .withText(goodbyeString) // Set the text to say.
                     .withBodyLanguageOption(gestures)
                     .build(); // Build the say action.
 
             say.run();
         });
+        this.talking = false;
+        this.listening = false;
+        this.goodbye = true;
     }
 
     public void lookAtExperimenter(){
@@ -455,11 +531,14 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
             }
 
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText("Thanks for that, I'll take it from here!") // Set the text to say.
+                    .withText(experimenterString) // Set the text to say.
                     .withBodyLanguageOption(gestures)
                     .build(); // Build the say action.
 
             say.run();
+
+            this.talking = false;
+            this.listening = false;
 
         });
     }
