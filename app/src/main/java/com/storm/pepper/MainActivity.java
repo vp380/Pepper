@@ -84,7 +84,7 @@ public class MainActivity extends RobotActivity implements PepperLog {
 
         // configure for chosen plan
         planResourceId = R.raw.plan_welcome_participant;
-        behaviourLibrary = new LessAnthropomorphicWelcomeLibrary();
+        behaviourLibrary = new MoreAnthropomorphicWelcomeLibrary();
 //        planResourceId = R.raw.plan_annoy;
 //        behaviourLibrary = new AnnoyBehaviourLibrary();
         // end configure for chosen plan

@@ -16,12 +16,12 @@ u:(~greetings) ~greetings my name is Pepper! What is your name?
 
         u2:(*) I am glad to hear that! Am I what you were expecting?
 
-            u3:(~yes *) Good, I would hate to disappoint you! ^endDiscuss(yes)
+            u3:(~yes *) Good, I would hate to disappoint you!
 
-#            Now, I will give you an overview of how the experimental study is going to take place.
-#            The study consists of two games. In the first game, called honesty game, you will have to roll a dice.
-#            In the second game, called investment game, you will have to invest some money. The rules of both games will
-#            be explained in detail at the table.
+            Now, I will give you an overview of how the experimental study is going to take place.
+            The study consists of two games. In the first game, called honesty game, you will have to roll a dice.
+            In the second game, called investment game, you will have to invest some money. The rules of both games will
+            be explained in detail at the table.
 
             Is this clear?
 
@@ -35,10 +35,10 @@ u:(~greetings) ~greetings my name is Pepper! What is your name?
 
             u3:(~no *) Well, life is full of surprises!
 
-#            Now, I will give you an overview of how the experimental study is going to take place.
-#            The study consists of two games. In the first game, called honesty game, you will have to roll a dice.
-#            In the second game, called investment game, you will have to invest some money. The rules of both games will
-#            be explained in detail at the table.
+            Now, I will give you an overview of how the experimental study is going to take place.
+            The study consists of two games. In the first game, called honesty game, you will have to roll a dice.
+            In the second game, called investment game, you will have to invest some money. The rules of both games will
+            be explained in detail at the table.
 
             Is this clear?
 

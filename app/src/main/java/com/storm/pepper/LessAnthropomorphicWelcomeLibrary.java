@@ -117,7 +117,7 @@ public class LessAnthropomorphicWelcomeLibrary extends BaseBehaviourLibrary {
         } else {
             FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
                 Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                        .withText("\\vct=70\\ Hello!") // Set the text to say.
+                        .withText("\\vct=70\\ \\readmode=word\\ Hello!") // Set the text to say.
                         .withBodyLanguageOption(gestures) //text too small
                         .build(); // Build the say action.
 
