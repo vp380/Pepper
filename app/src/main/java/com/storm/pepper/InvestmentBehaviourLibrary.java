@@ -82,19 +82,18 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
         played = false;
         goodbye = false;
 
-        anthropomorphic = true;
+        anthropomorphic = false;
         if (!anthropomorphic){
             holdAwareness();
             gestures = BodyLanguageOption.DISABLED;
             rulesIntro = "\\vct=70\\ \\readmode=word\\ Before we begin i will go over the rules to make sure you understand them. " +
-                    "You will recieve some money, and you will decide how much of that you want to give to me. " +
-                    "i will receive 3 times that amount, and then you will be given a portion of that amount back" +
+                    "You will recieve some money and you will decide how much of that you want to give to me. " +
+                    "i will receive 3 times that amount and then you will be given a portion of that amount back. " +
                     "You will not know how much you will receive until after the experiment is complete. " +
                     "Is that clear?";
-            //rulesIntro = "Test";
             gameIntro = "\\vct=70\\ \\readmode=word\\ i will remain silent until you have input your decision on the computer.";
-            experimenterString = "\\vct=70\\ \\readmode=word\\ Thank you, i shall take it from here.";
-            goodbyeString = "\\vct=70\\ \\readmode=word\\ That's the game done - thank you for your participation.";
+            experimenterString = "\\vct=70\\ \\readmode=word\\ Thank you i shall take it from here.";
+            goodbyeString = "\\vct=70\\ \\readmode=word\\ That's the game done thank you for your participation.";
             introTopic = TopicBuilder.with(qiContext) // Create the builder using the QiContext.
                     .withResource(R.raw.investment_rules_na) // Set the topic resource.
                     .build(); // Build the topic.
@@ -109,7 +108,6 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
                     "I'll get 3 times that amount, and then choose how much of it I want to give back to you. " +
                     "You won't know how much you'll get until after the experiment is done. " +
                     "Is that clear?";
-            rulesIntro = "Test";
             gameIntro = "I don't want to say anything that could influence your choice, so I'll just keep quiet until you're done. Just input your answer on the laptop, and tell me when you're finished.";
             experimenterString = "Thanks for that, I'll take it from here!";
             goodbyeString = "That's the game done - thank you for all the money you may or may not have given me!";
@@ -325,7 +323,7 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
 
         FutureUtils.wait(0, TimeUnit.SECONDS).andThenConsume((ignore) -> {
             Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-                    .withText(rulesIntro) // Set the text to say.
+                    .withText(gameIntro) // Set the text to say.
                     .withBodyLanguageOption(gestures)
                     .build(); // Build the say action.
 

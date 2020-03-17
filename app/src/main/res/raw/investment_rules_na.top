@@ -9,18 +9,18 @@ concept: (positive) [yes yeah yup correct "yes please"]
 concept: (negative) [no nope "no thanks" nah]
 
 u:(~positive)
-\vct=70\ \readmode=word\ Excellent, let us begin. $understood=true ^endDiscuss(yes)
+\vct=70\ \readmode=word\ Excellent let us begin. $understood=true ^endDiscuss(yes)
 
 u:(~negative)
 \vct=70\ \readmode=word\ Do you want me to explain the rules again?
     u1:(~positive)
-    \vct=70\ \readmode=word\ We shall play one round of the game. In this game, you have some money,
+    \vct=70\ \readmode=word\ We shall play one round of the game. In this game you have some money
     and you can give me as much or as little of it as you wish. i then multiply
-    the money i recieve by 3, and then you will be given an unknown portion of that back. Is that clear?
+    the money i recieve by 3 and then you will be given an unknown portion of that back. Is that clear?
         u2:(~positive)
-        \vct=70\ \readmode=word\ Excellent, let us begin. $understood=true ^endDiscuss(yes)
+        \vct=70\ \readmode=word\ Excellent let us begin. $understood=true ^endDiscuss(yes)
         u2:(~negative)
-        \vct=70\ \readmode=word\ In that case, the experimenter shall explain further. $understood=false ^endDiscuss(no)
+        \vct=70\ \readmode=word\ In that case the experimenter shall explain further. $understood=false ^endDiscuss(no)
     u1:(~negative)
-    \vct=70\ \readmode=word\ In that case, the experimenter shall explain further. $understood=false ^endDiscuss(no)
+    \vct=70\ \readmode=word\ In that case the experimenter shall explain further. $understood=false ^endDiscuss(no)
 
