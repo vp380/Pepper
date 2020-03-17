@@ -82,7 +82,7 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
         played = false;
         goodbye = false;
 
-        anthropomorphic = false;
+        anthropomorphic = true;
         if (!anthropomorphic){
             holdAwareness();
             gestures = BodyLanguageOption.DISABLED;
@@ -91,6 +91,7 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
                     "i will receive 3 times that amount, and then you will be given a portion of that amount back" +
                     "You will not know how much you will receive until after the experiment is complete. " +
                     "Is that clear?";
+            //rulesIntro = "Test";
             gameIntro = "\\vct=70\\ \\readmode=word\\ i will remain silent until you have input your decision on the computer.";
             experimenterString = "\\vct=70\\ \\readmode=word\\ Thank you, i shall take it from here.";
             goodbyeString = "\\vct=70\\ \\readmode=word\\ That's the game done - thank you for your participation.";
@@ -108,6 +109,7 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
                     "I'll get 3 times that amount, and then choose how much of it I want to give back to you. " +
                     "You won't know how much you'll get until after the experiment is done. " +
                     "Is that clear?";
+            rulesIntro = "Test";
             gameIntro = "I don't want to say anything that could influence your choice, so I'll just keep quiet until you're done. Just input your answer on the laptop, and tell me when you're finished.";
             experimenterString = "Thanks for that, I'll take it from here!";
             goodbyeString = "That's the game done - thank you for all the money you may or may not have given me!";
@@ -511,7 +513,10 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
                 lookAt.removeAllOnStartedListeners();
             }
 
-            lookAtFuture = lookAt.async().run();
+            if (anthropomorphic){
+                lookAtFuture = lookAt.async().run();
+            }
+
 
             PhraseSet phraseSet = PhraseSetBuilder.with(qiContext)
                     .withTexts("Back to you, Pepper")
@@ -526,7 +531,7 @@ public class InvestmentBehaviourLibrary extends BaseBehaviourLibrary {
 
             understood = true;
 
-            if (lookAtFuture != null) {
+            if (lookAtFuture != null && anthropomorphic) {
                 lookAtFuture.requestCancellation();
             }
 
